@@ -10,6 +10,10 @@ function memoization() {
 		return cache[elementId];
 	}
 
+	function queryStringToArray(queryString) {
+		return queryString.split(' ');
+	}
+
 	return {
 		returnElementById: function (elementId) {
 			if(cache.hasOwnProperty(elementId)) {
@@ -19,8 +23,20 @@ function memoization() {
 				return retrieveElementById(elementId);
 			}
 		}
+
+		queryGetter: function(queryString) {
+			let queryArray = queryStringToArray(queryString);
+			var i = 0;
+			while(queryArray[i]) {
+
+				i++
+			}
+
+		}
 	}
 }
+
+//element must have an id
 
 let theRoot = document.getElementById('root');
 let redBranch = document.createElement('div');
@@ -39,6 +55,19 @@ theRoot.appendChild(blueBranch);
 
 console.log('blueBranch element',newCache.returnElementById('blueBranch'));
 
-//element must have an id
+//querySelector
+
+let bigBranch = document.createElement('div');
+bigBranch.className = 'sizedBranch';
+bigBranch.id = 'bigBranch';
+theRoot.appendChild(bigBranch);
+
+let smallBranch = document.createElement('div');
+smallBranch.className = 'sizedBranch';
+smallBranch.id = 'smallBranch';
+theRoot.appendChild(smallBranch);
+
+console.log('bigBranch element', newCache.queryGetter('#bigBranch'))
+
 
 
