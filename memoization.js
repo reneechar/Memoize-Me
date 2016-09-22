@@ -1,10 +1,9 @@
-module.exports = function() {
+function memoization() {
 
 	let cache = {};
 
-
-	function addElementById(elementId) {
-		cache[elementId] = elementId;
+	function addElement(element) {
+		cache[element.id] = element;
 	}
 
 	function retrieveElementById(elementId) {
@@ -12,13 +11,34 @@ module.exports = function() {
 	}
 
 	return {
-		findElementById: function (elementId) {
+		returnElementById: function (elementId) {
 			if(cache.hasOwnProperty(elementId)) {
 				retrieveElementById(elementId);
 			} else {
-				addElementById(elementId);
-				return document.getElementById(elementId);
+				addElement(document.getElementById(elementId));
+				return retrieveElementById(elementId);
 			}
 		}
 	}
 }
+
+let theRoot = document.getElementById('root');
+let redBranch = document.createElement('div');
+redBranch.id = 'redBranch';
+
+theRoot.appendChild(redBranch);
+
+newCache = memoization();
+
+console.log('redBranch element',newCache.returnElementById('redBranch'));
+
+
+let blueBranch = document.createElement('div');
+blueBranch.id = 'blueBranch';
+theRoot.appendChild(blueBranch);
+
+console.log('blueBranch element',newCache.returnElementById('blueBranch'));
+
+//element must have an id
+
+
