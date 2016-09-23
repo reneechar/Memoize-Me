@@ -1,6 +1,7 @@
 function memoization() {
 
 	let cache = {};
+	let classCache = {};
 
 	function addElement(element) {
 		cache[element.id] = element;
@@ -10,8 +11,12 @@ function memoization() {
 		return cache[elementId];
 	}
 
-	function queryStringToArray(queryString) {
-		return queryString.split(' ');
+	function addElementByClass(element) {
+		classCache[element.className] = element;
+	}
+
+	function retrieveElementByClass(elementClass) {
+		return classCache[elementClass];
 	}
 
 	return {
@@ -22,21 +27,35 @@ function memoization() {
 				addElement(document.getElementById(elementId));
 				return retrieveElementById(elementId);
 			}
-		}
+		},
 
 		queryGetter: function(queryString) {
-			let queryArray = queryStringToArray(queryString);
+			let queryArray = queryString.split(' ');
 			var i = 0;
-			while(queryArray[i]) {
-
-				i++
+			let returnElement;
+			if(queryArray.length === 1){
+				for (var i = 0; i < queryArray.length; i++) {
+					if(queryArray[i].charAt(0) === '#') {
+						returnElement = this.returnElementById(queryArray[i].substring(1));
+					} else if(queryArray[i].charAt(0) === '.') {
+						if(classCache.hasOwnProperty(queryArray[i].substring(1))) {
+							returnElement = retrieveElementByClass(queryArray[i].substring(1));
+						} else {
+							addElementByClass(document.querySelector(queryArray[i]));
+							returnElement = retrieveElementByClass(queryArray[i].substring(1));
+						}
+					} else {
+						throw new Error('Can only pass in className or Id into this function');
+					}
+				}
 			}
-
+			return returnElement;
 		}
 	}
 }
 
 //element must have an id
+
 
 let theRoot = document.getElementById('root');
 let redBranch = document.createElement('div');
@@ -55,7 +74,7 @@ theRoot.appendChild(blueBranch);
 
 console.log('blueBranch element',newCache.returnElementById('blueBranch'));
 
-//querySelector
+//query selector
 
 let bigBranch = document.createElement('div');
 bigBranch.className = 'sizedBranch';
@@ -67,7 +86,7 @@ smallBranch.className = 'sizedBranch';
 smallBranch.id = 'smallBranch';
 theRoot.appendChild(smallBranch);
 
-console.log('bigBranch element', newCache.queryGetter('#bigBranch'))
-
+console.log('bigBranch element by Id', newCache.queryGetter('#bigBranch'));
+console.log('bigBranch element by className', newCache.queryGetter('.sizedBranch'));
 
 
